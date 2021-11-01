@@ -1,4 +1,6 @@
 const express = require("express");
+const upload = require("../../middleware/multer");
+
 const Product = require("../../db/models/Product");
 const {
   productListFetch,
@@ -23,13 +25,13 @@ router.param("productId", async (req, res, next, productId) => {
   }
 });
 
-router.post("/", productCreate);
+router.post("/", upload.single("image"), productCreate);
 
 router.get("/", productListFetch);
 
 router.get("/:productId", productDetailFetch);
 
-router.put("/:productId", productUpdate);
+router.put("/:productId", upload.single("image"), productUpdate);
 
 router.delete("/:productId", productDelete);
 
