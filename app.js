@@ -8,6 +8,9 @@ const cors = require("cors");
 const app = express();
 const path = require("path");
 const shopsRoutes = require("./apis/shops/routers");
+const usersRoutes = require("./apis/users/users.routes");
+const passport = require("passport");
+const jwtStrategy = require("passport-jwt").Strategy;
 
 connectDB();
 
@@ -21,6 +24,14 @@ app.use((req, res, next) => {
     res.status(400).json({ message: "I HATE BROCCOLI!! KEEFY! " });
   else next();
 });
+
+// Passport Strategies
+const { localStrategy } = require("./middleware/passport");
+
+// Passport Setup
+app.use(passport.initialize());
+passport.use(localStrategy);
+passport.use(jwtStrategy);
 
 // Routes
 app.use("/media", express.static(path.join(__dirname, "media")));

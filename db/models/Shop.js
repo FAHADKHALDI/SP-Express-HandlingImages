@@ -6,6 +6,7 @@ const ShopSchema = new mongoose.Schema(
     name: String,
     image: String,
     products: [{ type: mongoose.Schema.Types.ObjectId, ref: "Product" }],
+    owner: { type: mongoose.Schema.Types.ObjectId, ref: "User" },
   },
   { timestamps: true }
 );

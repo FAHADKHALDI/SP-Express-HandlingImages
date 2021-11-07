@@ -1,4 +1,4 @@
-const User = require("../../models/User");
+const User = require("../../db/models/User");
 const bcrypt = require("bcrypt");
 const { JWT_SECRET, JWT_EXPIRATION_MS } = require("../../config/keys");
 const jwt = require("jsonwebtoken");
@@ -23,4 +23,15 @@ exports.signup = async (req, res, next) => {
   } catch (error) {
     next(error);
   }
+};
+
+exports.signin = (req, res) => {
+  console.log("exports.signin -> req", req);
+  const payload = {
+    id: req.user._id,
+    username: req.user.username,
+    exp: Date.now() + JWT_EXPIRATION_MS,
+  };
+  const token = jwt.sign(JSON.stringify(payload), JWT_SECRET);
+  res.jason({ token });
 };

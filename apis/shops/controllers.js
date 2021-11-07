@@ -11,6 +11,10 @@ exports.getShops = async (req, res) => {
 
 exports.ShopCreate = async (req, res) => {
   try {
+    if (req.file) {
+      req.body.image = `http://${req.get("host")}/media/${req.file.filename}`;
+    }
+    req.body.owner = req.user._id;
     const newShop = await Shop.create(req.body);
     return res.status(201).json(newShop);
   } catch (error) {
@@ -21,6 +25,19 @@ exports.ShopCreate = async (req, res) => {
 exports.productCreate = async (req, res) => {
   try {
     const shopId = req.params.shopId;
+
+    if (!req.user._id.equals(req.shop.owner._id)) {
+      if (req.file) {
+        req.body.image = `http://${req.get("host")}/media/${req.file.filename}`;
+      }
+      req.body.shopId = req.shop._id;
+      const newProduct = await Product.create(req.body);
+      res.status(201).json(newProduct);
+    } else {
+      const err = new Error("Unauthorized");
+      err.status = 401;
+      next(err);
+    }
     req.body = { ...req.body, shop: shopId };
     const newProduct = await Product.create(req.body);
     await Shop.findOneAndUpdate(
